@@ -246,7 +246,7 @@ footer {
 
 /* Spinner */
 .loading-spinner {
-  border: 8px solid #f3f3f3;
+  border: 8px solid var(--purple-base);
   border-top: 8px solid var(--dank-green);
   border-radius: 50%;
   width: 60px;
