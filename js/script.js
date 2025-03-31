@@ -265,28 +265,28 @@ const effectColors = {
 // ===============================
 //    GLOBALS FOR CHAIN + PREVIEW
 // ===============================
-let chainMode = false;            // Once we finalize the first ingredient, chain mode is active
-let currentStack = [];            // The "finalized" strain across multiple steps
-let totalIngredientCost = 0;      // Cumulative cost of used ingredients
+let chainMode = false;            // Indicates a finalized mix
+let currentStack = [];            // Final effect stack
+let currentChain = [];            // Ingredient chain used (initialize as empty)
+let totalIngredientCost = 0;      // Cumulative cost of ingredients
 
 // For real-time preview
 let previewStack = [];
 let previewLog = [];
 let selectedIngredient = null;
 
-// Keep track of user-chosen starting effects
+// Keep track of user-chosen starting effects (Set of effect strings)
 let selectedEffects = new Set();
 
 // ===============================
 //   LOGIC FUNCTIONS
 // ===============================
 
-// Iterative rule application with dedup & logging
+// Iterative rule application with deduplication & logging
 function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
   let newStack = [...stack];
   let log = [];
   let changed = true;
-
   while (changed) {
     changed = false;
     for (const rule of rules) {
@@ -294,8 +294,7 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
       const hasIf = newStack.includes(ifEffect);
       const hasAnd = and ? newStack.includes(and) : true;
       const lacksUnless = !unless || !newStack.some(e => unless.includes(e));
-
-      // Replace effect
+      // Replacement rule
       if (ifEffect && thenEffect && hasIf && hasAnd && lacksUnless) {
         const idx = newStack.indexOf(ifEffect);
         if (idx !== -1 && newStack[idx] !== thenEffect) {
@@ -304,8 +303,7 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
           changed = true;
         }
       }
-
-      // Add effect
+      // Add rule
       if (ifEffect && addEffect && hasIf && hasAnd && lacksUnless) {
         if (!newStack.includes(addEffect)) {
           log.push(`${ingredientName} adds ${addEffect}`);
@@ -315,27 +313,23 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
       }
     }
   }
-
-  // Add the ingredient's baseEffect if missing
+  // Ensure the ingredient's base effect is added if missing.
   if (!newStack.includes(ingredientBaseEffect)) {
     log.push(`${ingredientName} adds ${ingredientBaseEffect}`);
     newStack.push(ingredientBaseEffect);
   }
-
-  // Deduplicate
+  // Deduplicate effects.
   newStack = [...new Set(newStack)];
-
   return { newStack, log };
 }
 
-// Render the "Before/After" + log
+// Render the current mix result and transformation log.
 function renderResult(before, after, log) {
   const stackContainer = document.getElementById("effectStack");
   stackContainer.innerHTML = `
     <div>Before: ${before.join(", ") || "none"}</div>
     <div>After: ${after.join(", ") || "none"}</div>
   `;
-
   const logContainer = document.getElementById("effectLog");
   logContainer.innerHTML = log.map(line => {
     const foundEffect = Object.keys(effectColors).find(e => line.includes(e));
@@ -344,12 +338,12 @@ function renderResult(before, after, log) {
   }).join("");
 }
 
-// Decide which stack to apply new ingredients to: the chain's "currentStack" or the user-chosen "selectedEffects"
+// Determine the base stack for applying a new ingredient.
 function getBaseStack() {
   return chainMode ? currentStack : Array.from(selectedEffects);
 }
 
-// Real-time preview: called whenever an ingredient button is selected
+// Real-time preview: when an ingredient is selected.
 function previewIngredient(ingredient) {
   const baseStack = getBaseStack();
   const { newStack, log } = applyRulesWithLog(
@@ -358,83 +352,75 @@ function previewIngredient(ingredient) {
     ingredient.name,
     ingredient.baseEffect
   );
-
   previewStack = newStack;
   previewLog = log;
-
-  // Render the preview result
   renderResult(baseStack, previewStack, previewLog);
-
-  // Preview price calculation (no accumulation of cost yet, just subtract this ingredient's cost)
+  // Preview price calculation (not permanently added)
   const baseDrug = document.getElementById("baseDrug").value;
   const basePrice = basePrices[baseDrug];
   const totalMultiplier = previewStack.reduce((sum, eff) => sum + (effects[eff] || 0), 0);
-  const finalPrice = Math.round(basePrice * (1 + totalMultiplier) * 100) / 100;
-  const previewProfit = Math.round((finalPrice - ingredient.cost) * 20 * 100) / 100;
-
-  document.getElementById("finalPrice").textContent = `Final Price (Preview): $${finalPrice.toFixed(2)}`;
+  const calcPrice = Math.round(basePrice * (1 + totalMultiplier) * 100) / 100;
+  const previewProfit = Math.round((calcPrice - ingredient.cost) * 20 * 100) / 100;
+  document.getElementById("finalPrice").textContent = `Final Price (Preview): $${calcPrice.toFixed(2)}`;
   document.getElementById("totalProfit").textContent = `Total Profit (Preview): $${previewProfit.toFixed(2)}`;
 }
 
-// Finalize the currently selected ingredient, applying it to the chain
+// Finalize the currently selected ingredient.
 function calculateEffects() {
-  if (!selectedIngredient) {
-    return; // No ingredient chosen
-  }
-
-  // If it's the first time finalizing, set chainMode and initialize currentStack from user’s selectedEffects
+  if (!selectedIngredient) return;
+  
+  // If first time, initialize chain mode.
   if (!chainMode) {
     chainMode = true;
     currentStack = Array.from(selectedEffects);
+    currentChain = []; // Initialize currentChain as empty array.
     totalIngredientCost = 0;
   }
-
-  // "previewStack" is the new final stack if we apply selectedIngredient
+  
+  // Finalize the previewed transformation.
   currentStack = previewStack;
+  currentChain = currentChain.concat(selectedIngredient.name);
   totalIngredientCost += selectedIngredient.cost;
-
-  // Re-render to confirm final
+  
   renderResult(getBaseStack(), currentStack, previewLog);
-
-  // Now do final price calc with totalIngredientCost
+  
+  // Final price & profit calculations:
   const baseDrug = document.getElementById("baseDrug").value;
   const basePrice = basePrices[baseDrug];
   const totalMultiplier = currentStack.reduce((sum, eff) => sum + (effects[eff] || 0), 0);
-  const finalPrice = Math.round(basePrice * (1 + totalMultiplier) * 100) / 100;
-  const totalProfit = Math.round((finalPrice - totalIngredientCost) * 20 * 100) / 100;
-
-  document.getElementById("finalPrice").textContent = `Final Price: $${finalPrice.toFixed(2)}`;
-  document.getElementById("totalProfit").textContent = `Total Profit (20 units): $${totalProfit.toFixed(2)}`;
-
-  // Reset preview
+  const calcPrice = Math.round(basePrice * (1 + totalMultiplier) * 100) / 100;
+  const finalProfit = Math.round((calcPrice - totalIngredientCost) * 20 * 100) / 100;
+  document.getElementById("finalPrice").textContent = `Final Price: $${calcPrice.toFixed(2)}`;
+  document.getElementById("totalProfit").textContent = `Total Profit (20 units): $${finalProfit.toFixed(2)}`;
+  
+  // Reset preview values and unselect ingredient.
   previewStack = [];
   previewLog = [];
-
-  // Unselect the ingredient
   document.querySelectorAll(".ingredient-button").forEach(btn => btn.classList.remove("selected"));
   selectedIngredient = null;
 }
 
-// Clear everything back to default
+// Clear all selections and reset the calculator.
 function clearStack() {
   chainMode = false;
   currentStack = [];
+  currentChain = [];
   totalIngredientCost = 0;
   previewStack = [];
   previewLog = [];
   selectedIngredient = null;
-
   selectedEffects.clear();
+  
   document.querySelectorAll(".effect-button").forEach(btn => btn.classList.remove("active"));
   document.querySelectorAll(".ingredient-button").forEach(btn => btn.classList.remove("selected"));
-
+  
   document.getElementById("effectStack").innerHTML = "Effect Stack Result";
   document.getElementById("effectLog").innerHTML = "Transformation Log";
   document.getElementById("finalPrice").textContent = "Final Price: $0.00";
   document.getElementById("totalProfit").textContent = "Total Profit (20 units): $0.00";
 }
 
-// Toggle a starting effect on/off
+// Toggle a starting effect on/off.
 function toggleEffect(btn, effect) {
   if (selectedEffects.has(effect)) {
     selectedEffects.delete(effect);
@@ -444,9 +430,9 @@ function toggleEffect(btn, effect) {
     btn.classList.add("active");
   }
 }
-// Function to show a modal message (if already implemented) or fallback to console.log.
+
+// Modal popup for messages.
 function showModal(message, duration = 3000) {
-  // If you have a modal popup, use that.
   const modal = document.getElementById("modalMessage");
   if (modal) {
     modal.querySelector("p").innerText = message;
@@ -461,63 +447,55 @@ function showModal(message, duration = 3000) {
 
 // Save strain function using localStorage.
 function saveCurrentStrain() {
-  // Check if a final strain state exists.
+  // Verify a finalized strain exists.
   if (!chainMode || currentStack.length === 0) {
     showModal("No strain to save! Please calculate your mix first.");
     return;
   }
   
-  // Get the user-entered strain name (if provided), or use a default name.
-  const strainName = document.getElementById("strainNameInput").value.trim() || 
+  // Retrieve the user-entered strain name.
+  const strainName = document.getElementById("strainNameInput").value.trim() ||
                      `Strain ${new Date().toLocaleString()}`;
   
-  // Create a strain object; adjust property names as needed.
+  // Create the strain object.
   const strain = {
     name: strainName,
-    chain: typeof currentChain !== "undefined" ? currentChain : [],  
-    finalEffects: currentStack,  
-    totalCost: totalIngredientCost,
-    finalPrice: typeof finalPrice !== "undefined" ? finalPrice : 0,
-    totalProfit: typeof totalProfit !== "undefined" ? totalProfit : 0,
+    startingEffects: Array.from(selectedEffects),
+    chain: currentChain || [],
+    finalEffects: currentStack,
+    totalCost: totalIngredientCost || 0,
+    finalPrice: finalPrice || 0,
+    totalProfit: totalProfit || 0,
     timestamp: Date.now()
   };
-
-  // Retrieve existing strain history from localStorage.
+  
   let strainHistory = localStorage.getItem("strainHistory");
   strainHistory = strainHistory ? JSON.parse(strainHistory) : [];
-  
-  // Append the new strain and save back to localStorage.
   strainHistory.push(strain);
   localStorage.setItem("strainHistory", JSON.stringify(strainHistory));
   
   showModal("Strain saved successfully!");
-  
-  // Clear the input field for strain name.
+  // Clear the input field.
   document.getElementById("strainNameInput").value = "";
 }
 
-// Attach event listener to the Save Strain button.
+// Attach event listener for Save Strain button.
 document.getElementById("saveStrainBtn").addEventListener("click", saveCurrentStrain);
 
-// Called when user clicks an ingredient button
+// When an ingredient button is clicked, select it and preview transformation.
 function selectIngredient(button, name) {
-  // Unselect all
   document.querySelectorAll(".ingredient-button").forEach(btn => btn.classList.remove("selected"));
-  // Select this one
   button.classList.add("selected");
-
-  // Find the ingredient data
+  
   const ing = ingredients.find(i => i.name === name);
   if (!ing) return;
-
+  
   selectedIngredient = ing;
-  // Show a real-time preview of how it would transform the current stack
   previewIngredient(ing);
 }
 
-// DOM load: populate effect + ingredient buttons, wire up event handlers
+// DOMContentLoaded: Populate starting effect and ingredient buttons.
 document.addEventListener("DOMContentLoaded", () => {
-  // Populate starting effects
   const startingEffectsContainer = document.getElementById("startingEffects");
   Object.keys(effects).forEach(effect => {
     const btn = document.createElement("button");
@@ -526,8 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => toggleEffect(btn, effect));
     startingEffectsContainer.appendChild(btn);
   });
-
-  // Populate ingredient buttons
+  
   const ingredientsContainer = document.getElementById("ingredients");
   ingredients.forEach(ing => {
     const btn = document.createElement("button");
@@ -537,8 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => selectIngredient(btn, ing.name));
     ingredientsContainer.appendChild(btn);
   });
-
-  // Hook up the "Calculate" and "Clear" buttons
+  
   document.getElementById("calculateBtn").addEventListener("click", calculateEffects);
   document.getElementById("clearBtn").addEventListener("click", clearStack);
 });

@@ -22,6 +22,7 @@
     <div class="container">
       <h1>Mix Calculator</h1>
   
+      <!-- Base Drug Selection -->
       <div class="row">
         <label for="baseDrug">Select Base Drug:</label>
         <select id="baseDrug">
@@ -31,18 +32,21 @@
         </select>
       </div>
   
+      <!-- Starting Effects -->
       <div class="row">
         <label>Select Starting Effects:</label>
         <div id="startingEffects" class="multi-select"></div>
       </div>
   
+      <!-- Ingredient Selection -->
       <div class="row">
         <label>Choose Ingredient (only one):</label>
         <div id="ingredients" class="ingredient-list"></div>
       </div>
   
+      <!-- Control Buttons -->
       <div class="row button-row">
-        <button id="calculateBtn">Next Chain</button>
+        <button id="calculateBtn">Calculate Price</button>
         <button id="clearBtn" class="clear-button">Clear Stack</button>
       </div>
       
@@ -53,7 +57,13 @@
       <div class="row">
         <button id="saveStrainBtn">Save Strain</button>
       </div>
+
+      <!-- Modal Popup for Messages -->
+      <div id="modalMessage" class="modal-message">
+        <p></p>
+      </div>
   
+      <!-- Display Areas for Results -->
       <div class="row">
         <div id="effectStack" class="effects">Effect Stack Result</div>
       </div>
