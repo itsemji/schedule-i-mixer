@@ -269,6 +269,8 @@ let chainMode = false;            // Indicates a finalized mix
 let currentStack = [];            // Final effect stack
 let currentChain = [];            // Ingredient chain used (initialize as empty)
 let totalIngredientCost = 0;      // Cumulative cost of ingredients
+let finalPrice = 0;               // Global final price
+let totalProfit = 0;              // Global total profit
 
 // For real-time preview
 let previewStack = [];
@@ -355,6 +357,7 @@ function previewIngredient(ingredient) {
   previewStack = newStack;
   previewLog = log;
   renderResult(baseStack, previewStack, previewLog);
+  
   // Preview price calculation (not permanently added)
   const baseDrug = document.getElementById("baseDrug").value;
   const basePrice = basePrices[baseDrug];
@@ -373,7 +376,7 @@ function calculateEffects() {
   if (!chainMode) {
     chainMode = true;
     currentStack = Array.from(selectedEffects);
-    currentChain = []; // Initialize currentChain as empty array.
+    currentChain = [];
     totalIngredientCost = 0;
   }
   
@@ -390,10 +393,12 @@ function calculateEffects() {
   const totalMultiplier = currentStack.reduce((sum, eff) => sum + (effects[eff] || 0), 0);
   const calcPrice = Math.round(basePrice * (1 + totalMultiplier) * 100) / 100;
   const finalProfit = Math.round((calcPrice - totalIngredientCost) * 20 * 100) / 100;
+  // Update global finalPrice and totalProfit variables for saving purposes.
+  finalPrice = calcPrice;
+  totalProfit = finalProfit;
   document.getElementById("finalPrice").textContent = `Final Price: $${calcPrice.toFixed(2)}`;
   document.getElementById("totalProfit").textContent = `Total Profit (20 units): $${finalProfit.toFixed(2)}`;
   
-  // Reset preview values and unselect ingredient.
   previewStack = [];
   previewLog = [];
   document.querySelectorAll(".ingredient-button").forEach(btn => btn.classList.remove("selected"));
@@ -406,6 +411,8 @@ function clearStack() {
   currentStack = [];
   currentChain = [];
   totalIngredientCost = 0;
+  finalPrice = 0;
+  totalProfit = 0;
   previewStack = [];
   previewLog = [];
   selectedIngredient = null;
@@ -447,17 +454,14 @@ function showModal(message, duration = 3000) {
 
 // Save strain function using localStorage.
 function saveCurrentStrain() {
-  // Verify a finalized strain exists.
   if (!chainMode || currentStack.length === 0) {
     showModal("No strain to save! Please calculate your mix first.");
     return;
   }
   
-  // Retrieve the user-entered strain name.
   const strainName = document.getElementById("strainNameInput").value.trim() ||
                      `Strain ${new Date().toLocaleString()}`;
   
-  // Create the strain object.
   const strain = {
     name: strainName,
     startingEffects: Array.from(selectedEffects),
@@ -475,7 +479,6 @@ function saveCurrentStrain() {
   localStorage.setItem("strainHistory", JSON.stringify(strainHistory));
   
   showModal("Strain saved successfully!");
-  // Clear the input field.
   document.getElementById("strainNameInput").value = "";
 }
 
@@ -494,7 +497,7 @@ function selectIngredient(button, name) {
   previewIngredient(ing);
 }
 
-// DOMContentLoaded: Populate starting effect and ingredient buttons.
+// Populate starting effects and ingredient buttons when DOM loads.
 document.addEventListener("DOMContentLoaded", () => {
   const startingEffectsContainer = document.getElementById("startingEffects");
   Object.keys(effects).forEach(effect => {
