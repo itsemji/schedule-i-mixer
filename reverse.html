@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reverse Engineer - Schedule I Mix Simulator</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+         <li><a href="index.html">Home</a></li>
+         <li><a href="calculator.html">Calculator</a></li>
+         <li><a href="reverse.html" class="active">Reverse Engineer</a></li>
+         <li><a href="history.html">Strain History</a></li>
+         <li><a href="help.html">Help</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="container">
+      <h1>Reverse Engineer Mix</h1>
+      <p>Select your desired final effects:</p>
+      <div id="targetEffects" class="multi-select"></div>
+      <div id="targetEffects" class="multi-select"></div>
+    
+      <!-- Added a button row for spacing -->
+      <div class="row button-row">
+        <button id="reverseBtn">Reverse Engineer</button>
+      </div>
+      
+      <div id="reverseResult" class="effects">
+        Your reverse engineered chain will appear here.
+      </div>
+
+      <div id="loadingIndicator" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Please be patient... running through iterations.</p>
+      </div>
+      
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Schedule I Mix Simulator</p>
+  </footer>
+  <script src="js/reverse.js"></script>
+</body>
+</html>

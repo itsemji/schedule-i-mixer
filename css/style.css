@@ -1,0 +1,265 @@
+/* Global Styles */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #2e1044;
+  color: #d7f7d3;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 960px;
+  margin: 2rem auto;
+  background-color: #3e0a50;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #00000050;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #d7f7d3;
+}
+
+.row {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+select {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #a252ba;
+  color: #fff;
+}
+
+.multi-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Define Color Variables */
+:root {
+  --dank-green: #a2f37d;
+  --dank-green-hover: #c2ffaa;
+  --purple-base: #6a2c6d;
+  --purple-hover: #7c3799;
+  --purple-active: #b86fc6;
+  --stoned-red: #ff746c;
+  --stoned-red-hover: #ff9589;
+}
+
+/* Starting Effects Buttons */
+.effect-button {
+  background-color: var(--purple-base);
+  border: 1px solid #9b4ea3;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  flex: 1 1 150px;
+  text-align: center;
+  /* Text in dank green */
+  color: var(--dank-green);
+}
+
+.effect-button:hover {
+  background-color: var(--purple-hover);
+  color: var(--dank-green-hover);
+}
+
+.effect-button.active {
+  background-color: var(--purple-active);
+  border-color: var(--purple-active);
+  color: var(--dank-green-hover);
+}
+
+/* Ingredient Buttons */
+#ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ingredient {
+  background-color: var(--purple-base);
+  color: var(--dank-green);
+  border: 1px solid #9b4ea3;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.ingredient:hover {
+  background-color: var(--purple-hover);
+  color: var(--dank-green-hover);
+}
+
+.ingredient.selected {
+  background-color: var(--purple-active);
+  color: var(--dank-green-hover);
+  border-color: var(--purple-active);
+}
+
+/* General Button Styling */
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  background-color: var(--purple-base);
+  color: var(--dank-green);
+}
+
+button:hover {
+  background-color: var(--purple-hover);
+  color: var(--dank-green-hover);
+}
+
+/* Specific Reverse Engineer Button */
+#reverseBtn {
+  background-color: var(--dank-green);
+  color: #222;
+  padding: 0.6rem 1.2rem;
+}
+#reverseBtn:hover {
+  background-color: var(--dank-green-hover);
+  color: #222;
+}
+
+/* Clear Button */
+.clear-button {
+  background-color: var(--stoned-red);
+  color: #fff;
+}
+.clear-button:hover {
+  background-color: var(--stoned-red-hover);
+  color: #fff;
+}
+
+/* Button Row (for spacing, e.g., on reverse page) */
+.button-row {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+/* Effects and Log Boxes */
+.effects {
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: monospace;
+  white-space: pre-line;
+  border: 1px solid #444;
+}
+
+.result,
+.profit {
+  background-color: #2c2c2c;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  display: inline-block;
+  margin-right: 1rem;
+}
+
+#finalPrice {
+  color: #ffdf7f;
+}
+
+#totalProfit {
+  color: #ffd700;
+}
+
+/* Navigation Bar Styles */
+header {
+  border-bottom: 2px solid #4a1461;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+nav ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  color: var(--dank-green);
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0.5rem 0.75rem;
+  transition: color 0.2s;
+}
+
+nav ul li a:hover {
+  color: var(--dank-green-hover);
+}
+
+nav ul li a.active {
+  border-bottom: 2px solid var(--dank-green);
+}
+
+/* Footer Styles */
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #ccc;
+  border-top: 1px solid #444;
+}
+/* Loading Overlay Styles */
+.loading-overlay {
+  display: none; /* hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Spinner */
+.loading-spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid var(--dank-green); /* use your dank green variable */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+  color: #fff;
+  font-size: 1.2rem;
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Help - Schedule I Mix Simulator</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+         <li><a href="index.html">Home</a></li>
+         <li><a href="calculator.html">Calculator</a></li>
+         <li><a href="reverse.html">Reverse Engineer</a></li>
+         <li><a href="history.html">Strain History</a></li>
+         <li><a href="help.html" class="active">Help</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="container">
+      <h1>Help &amp; FAQs</h1>
+      <section>
+        <h2>Overview</h2>
+        <p>
+          Welcome to the Schedule I Mix Simulator—your one-stop-shop for simulating high-stakes mixes. 
+          This tool lets you experiment with various ingredients and effects to see how they transform your mix, 
+          calculate final prices and profit margins, and even reverse-engineer the cheapest chain for your desired outcomes.
+        </p>
+      </section>
+      <section>
+        <h2>How to Use the Simulator</h2>
+        <h3>Mix Calculator</h3>
+        <ol>
+          <li>
+            <strong>Select a base drug:</strong> Choose between Weed, Meth, or Cocaine, each with its own base price.
+          </li>
+          <li>
+            <strong>Pick starting effects:</strong> Toggle the available effects to form your initial strain.
+          </li>
+          <li>
+            <strong>Add ingredients:</strong> Click on an ingredient to see a real-time preview of how it transforms your mix.
+            When you’re happy, click <em>Calculate Price</em> to lock in the changes.
+          </li>
+          <li>
+            <strong>Chain ingredients:</strong> Repeat the process to iteratively evolve your strain. Each ingredient adds to the total cost.
+          </li>
+        </ol>
+        <h3>Reverse Engineer</h3>
+        <ol>
+          <li>
+            <strong>Select your desired final effects:</strong> Click on the effects you want your mix to include.
+          </li>
+          <li>
+            <strong>Hit Reverse Engineer:</strong> The tool will search through potential ingredient chains to find the cheapest ways to reach your target. 
+            (Be patient—it might take a few seconds if the degen math gets wild!)
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h2>Transformation Rules</h2>
+        <p>
+          Every ingredient in the simulator follows a set of transformation rules. For example:
+        </p>
+        <ul>
+          <li>
+            <strong>Cuke:</strong> If the mix contains Toxic, Cuke will replace it with Euphoric; if it finds Slippery, it swaps it for Munchies, and so on.
+          </li>
+          <li>
+            <strong>Paracetamol:</strong> May replace Energizing with Paranoia (if Munchies aren’t present) or add Sneaky, etc.
+          </li>
+        </ul>
+        <p>
+          For full details, check out the code. But trust us—it's a wild ride.
+        </p>
+      </section>
+      <section>
+        <h2>FAQs</h2>
+        <h3>Q: Why does the search sometimes take a while?</h3>
+        <p>
+          A: We're running millions of possible ingredient combinations under the hood. If the desired effects are hard to reach,
+          the search might run longer. Our loading spinner will let you know it's still working its magic.
+        </p>
+        <h3>Q: What if I can’t find a solution?</h3>
+        <p>
+          A: It might be that the effects you selected are impossible to reach with the current ingredients, or the search timed out.
+          Try selecting fewer or different effects.
+        </p>
+        <h3>Q: I’m a degen—can I tweak the rules?</h3>
+        <p>
+          A: Absolutely. The transformation rules and effect multipliers are all in the code. Tinker away and share your custom mix formulas!
+        </p>
+      </section>
+      <section>
+        <h2>Troubleshooting</h2>
+        <p>
+          If you experience issues like unresponsive pages or strange results, check your console for errors or try clearing your selections and starting fresh.
+        </p>
+      </section>
+      <p>
+        And remember, we’re all just some degens trying to simulate drug dealing here—so relax, experiment, and have fun!
+      </p>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Schedule I Mix Simulator</p>
+  </footer>
+</body>
+</html>

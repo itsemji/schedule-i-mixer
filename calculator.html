@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mix Calculator - Schedule I Mix Simulator</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calculator.html" class="active">Calculator</a></li>
+        <li><a href="reverse.html">Reverse Engineer</a></li>
+        <li><a href="history.html">Strain History</a></li>
+        <li><a href="help.html">Help</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="container">
+      <h1>Mix Calculator</h1>
+  
+      <div class="row">
+        <label for="baseDrug">Select Base Drug:</label>
+        <select id="baseDrug">
+          <option value="Weed">Weed ($35)</option>
+          <option value="Meth">Meth ($70)</option>
+          <option value="Cocaine">Cocaine ($150)</option>
+        </select>
+      </div>
+  
+      <div class="row">
+        <label>Select Starting Effects:</label>
+        <div id="startingEffects" class="multi-select"></div>
+      </div>
+  
+      <div class="row">
+        <label>Choose Ingredient (only one):</label>
+        <div id="ingredients" class="ingredient-list"></div>
+      </div>
+  
+      <div class="row button-row">
+        <button id="calculateBtn">Next Chain</button>
+        <button id="clearBtn" class="clear-button">Clear Stack</button>
+      </div>
+      
+      <!-- Save Strain Section -->
+      <div class="row">
+        <input type="text" id="strainNameInput" placeholder="Enter strain name (optional)" />
+      </div>
+      <div class="row">
+        <button id="saveStrainBtn">Save Strain</button>
+      </div>
+  
+      <div class="row">
+        <div id="effectStack" class="effects">Effect Stack Result</div>
+      </div>
+  
+      <div class="row">
+        <div id="effectLog" class="effects">Transformation Log</div>
+      </div>
+  
+      <div class="row price-result-row">
+        <div id="finalPrice" class="result">Final Price: $0.00</div>
+        <div id="totalProfit" class="profit">Total Profit (20 units): $0.00</div>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Schedule I Mix Simulator</p>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>
