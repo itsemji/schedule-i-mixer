@@ -434,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
     targetContainer.appendChild(btn);
   });
   
-  // Create the weed strain dropdown (if not already present).
+  // Create the weed strain dropdown.
   const container = document.querySelector(".container");
   if (container && !document.getElementById("weedStrainSelection")) {
     const weedDiv = document.createElement("div");
