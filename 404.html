@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 - Lost in the Mix</title>
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--dank-green);
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .countdown {
+      font-size: 1.5rem;
+      color: var(--stoned-red);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>404: Wrong Strain, Chief 🍃</h1>
+    <p>You’ve wandered into uncharted territory.</p>
+    <p class="countdown">Redirecting back in <span id="timer">10</span> seconds...</p>
+    <p><a href="/" class="effect-button">Take me back now</a></p>
+  </div>
+
+  <script>
+    let countdown = 10;
+    const timerEl = document.getElementById('timer');
+    const interval = setInterval(() => {
+      countdown--;
+      timerEl.textContent = countdown;
+      if (countdown === 0) {
+        clearInterval(interval);
+        window.location.href = "/";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
