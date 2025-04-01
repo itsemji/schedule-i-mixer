@@ -70,7 +70,6 @@ select {
   transition: all 0.2s ease;
   flex: 1 1 150px;
   text-align: center;
-  /* Text in dank green */
   color: var(--dank-green);
 }
 
@@ -244,7 +243,6 @@ footer {
   flex-direction: column;
 }
 
-/* Spinner */
 .loading-spinner {
   border: 8px solid var(--purple-base);
   border-top: 8px solid var(--dank-green);
@@ -263,4 +261,14 @@ footer {
 .loading-overlay p {
   color: #fff;
   font-size: 1.2rem;
+}
+
+/* NEW: Weed Strain Dropdown Container */
+.dropdown-container {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid var(--dank-green);
+  background-color: #4a1461;
+  border-radius: 8px;
+  max-width: 300px;
 }

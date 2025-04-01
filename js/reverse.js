@@ -13,6 +13,19 @@ const effects = {
   "Tropic Thunder": 0.46, "Zombifying": 0.58
 };
 
+// NEW: Effect difficulty mapping – higher values indicate effects that are harder to achieve.
+const effectDifficulty = {
+  "Anti-Gravity": 1.5, "Athletic": 1, "Balding": 1, "Bright-Eyed": 1,
+  "Calming": 1, "Calorie-Dense": 1, "Cyclopean": 1.2, "Disorienting": 1,
+  "Electrifying": 1.3, "Energizing": 1, "Euphoric": 1.5, "Explosive": 1,
+  "Focused": 2.0, "Foggy": 1, "Gingeritis": 1.2, "Glowing": 1.2,
+  "Jennerising": 1.5, "Laxative": 1, "Long Faced": 1.2, "Munchies": 1,
+  "Paranoia": 1, "Refreshing": 1, "Schizophrenia": 2.0, "Sedating": 1,
+  "Seizure-Inducing": 2.0, "Shrinking": 2.0, "Slippery": 1.2, "Smelly": 1,
+  "Sneaky": 1.3, "Spicy": 1, "Thought-Provoking": 1.5, "Toxic": 1,
+  "Tropic Thunder": 1.2, "Zombifying": 1.5
+};
+
 // 2) Ingredients array (identical to the calculator)
 const ingredients = [
   {
@@ -242,7 +255,20 @@ const ingredients = [
   }
 ];
 
-// 3) NEW: Weed strain mapping (for reverse engineering starting state)
+// 4) Optional effectColors for logs
+const effectColors = {
+  "Anti-Gravity": "#8be9fd", "Athletic": "#f1fa8c", "Balding": "#f8f8f2", "Bright-Eyed": "#ffb86c",
+  "Calming": "#6272a4", "Calorie-Dense": "#ff79c6", "Cyclopean": "#bd93f9", "Disorienting": "#44475a",
+  "Electrifying": "#f8f8f2", "Energizing": "#fffa65", "Euphoric": "#50fa7b", "Explosive": "#ff5555",
+  "Focused": "#8be9fd", "Foggy": "#bbbbbb", "Gingeritis": "#ff9e6e", "Glowing": "#ffff99",
+  "Jennerising": "#ffb6c1", "Laxative": "#964B00", "Long Faced": "#aaaaaa", "Munchies": "#fca3b7",
+  "Paranoia": "#ff2f2f", "Refreshing": "#aaf0d1", "Schizophrenia": "#222", "Sedating": "#cba6f7",
+  "Seizure-Inducing": "#dd00ff", "Shrinking": "#6699cc", "Slippery": "#89cff0", "Smelly": "#aaff00",
+  "Sneaky": "#fabebe", "Spicy": "#ff6f61", "Thought-Provoking": "#d291bc", "Toxic": "#00ff00",
+  "Tropic Thunder": "#ffcc00", "Zombifying": "#708090"
+};
+
+// 5) Weed strain mapping (for reverse engineering starting state)
 // This mapping defines the base effect for each weed strain.
 const weedStrainMapping = {
   "OG Kush": "Calming",
@@ -297,76 +323,91 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
 }
 
 // ------------------------------
-//    ASYNCHRONOUS REVERSE ENGINEERING
+//    REFINED A* REVERSE ENGINEERING SEARCH
 // ------------------------------
 
-// Modified to accept a startingEffect parameter (NEW)
-function asynchronousReverseEngineerChain(targetEffects, startingEffect, callback) {
+// Refined heuristic using effect difficulty mapping.
+// For each missing target effect, add: difficulty * minCost * 0.5.
+function refinedHeuristic(node, targetEffects, minCost) {
+  let h = 0;
+  targetEffects.forEach(effect => {
+    if (!node.effects.includes(effect)) {
+      const difficulty = effectDifficulty[effect] || 1;
+      h += difficulty * minCost * 0.5;
+    }
+  });
+  return h;
+}
+
+// Standard A* search that returns the single most cost-effective chain.
+// This version uses a visited (closed) set to prune duplicate states.
+function aStarReverseEngineer(targetEffects, startingEffect, callback) {
   const minCost = Math.min(...ingredients.map(i => i.cost));
-  function heuristic(state) {
-    let missing = targetEffects.filter(e => !state.effects.includes(e)).length;
-    return missing * minCost;
-  }
-  
+  // Each node: { effects: [...], chain: [...], cost: number }
   let frontier = [];
-  // NEW: Use the startingEffect from the selected weed strain.
   frontier.push({ effects: [startingEffect], chain: [], cost: 0 });
-  let solutions = [];
-  let iterations = 0;
-  const maxIterations = 50000;
-  const batchSize = 500;
+  // visited: map state signature -> lowest cost found for that state.
+  const visited = {};
+
+  // Helper: create a unique key for a state by sorting its effects.
+  function stateKey(effectsArr) {
+    return effectsArr.slice().sort().join("|");
+  }
+
+  // Helper function to check if state satisfies all target effects.
+  function goalTest(node) {
+    return targetEffects.every(e => node.effects.includes(e));
+  }
+
+  const maxChainLength = 50; // Increase allowed depth for multiple targets.
   const timeLimit = 120000; // 2 minutes
   const startTime = Date.now();
-  
-  // Deduplicate solutions that use the same set of ingredients (ignoring order)
-  function deduplicateSolutions(solutions) {
-    const seen = new Set();
-    const unique = [];
-    for (const sol of solutions) {
-      const signature = sol.chain.slice().sort().join("|");
-      if (!seen.has(signature)) {
-        seen.add(signature);
-        unique.push(sol);
-      }
-    }
-    return unique;
-  }
-  
+
   function processBatch() {
-    let batchCount = 0;
-    while (frontier.length > 0 && batchCount < batchSize && iterations < maxIterations) {
-      if (Date.now() - startTime > timeLimit) {
-        console.warn("Search timed out.");
-        solutions.sort((a, b) => a.cost - b.cost);
-        solutions = deduplicateSolutions(solutions);
-        callback(solutions.slice(0, 3));
-        return;
-      }
-      frontier.sort((a, b) => (a.cost + heuristic(a)) - (b.cost + heuristic(b)));
-      let current = frontier.shift();
-      iterations++;
-      batchCount++;
-      if (targetEffects.every(e => current.effects.includes(e))) {
-        solutions.push(current);
-        if (solutions.length >= 3) break;
-        continue;
-      }
-      if (current.chain.length > 25) continue;
-      ingredients.forEach(ing => {
-        let result = applyRulesWithLog(ing.rules, current.effects, ing.name, ing.baseEffect);
-        let newEffects = result.newStack;
-        let newChain = current.chain.concat(ing.name);
-        let newCost = current.cost + ing.cost;
-        frontier.push({ effects: newEffects, chain: newChain, cost: newCost });
-      });
+    if (Date.now() - startTime > timeLimit) {
+      console.warn("Search timed out.");
+      callback(null);
+      return;
     }
-    if (solutions.length >= 3 || frontier.length === 0 || iterations >= maxIterations) {
-      solutions.sort((a, b) => a.cost - b.cost);
-      solutions = deduplicateSolutions(solutions);
-      callback(solutions.slice(0, 3));
-    } else {
+    // Sort frontier by f = cost + refinedHeuristic
+    frontier.sort((a, b) =>
+      (a.cost + refinedHeuristic(a, targetEffects, minCost)) -
+      (b.cost + refinedHeuristic(b, targetEffects, minCost))
+    );
+    // Get best candidate
+    let current = frontier.shift();
+    if (!current) {
+      callback(null);
+      return;
+    }
+    // Check visited
+    let key = stateKey(current.effects);
+    if (visited[key] !== undefined && visited[key] <= current.cost) {
+      // Skip this node since a better or equal cost state has been seen.
       setTimeout(processBatch, 0);
+      return;
     }
+    visited[key] = current.cost;
+    if (goalTest(current)) {
+      callback(current);
+      return;
+    }
+    if (current.chain.length >= maxChainLength) {
+      setTimeout(processBatch, 0);
+      return;
+    }
+    // Expand current node
+    ingredients.forEach(ing => {
+      const result = applyRulesWithLog(ing.rules, current.effects, ing.name, ing.baseEffect);
+      const newEffects = result.newStack;
+      // Skip if no change
+      if (newEffects.toString() === current.effects.toString()) return;
+      const newChain = current.chain.concat(ing.name);
+      const newCost = current.cost + ing.cost;
+      const newNode = { effects: newEffects, chain: newChain, cost: newCost };
+      frontier.push(newNode);
+    });
+    setTimeout(processBatch, 0);
   }
   
   processBatch();
@@ -376,9 +417,8 @@ function asynchronousReverseEngineerChain(targetEffects, startingEffect, callbac
 //    UI INTEGRATION
 // ------------------------------
 
-// NEW: Create and insert the weed strain selection dropdown into the page.
+// Populate target effects buttons on DOM load.
 document.addEventListener("DOMContentLoaded", () => {
-  // Existing code to populate target effects buttons remains unchanged.
   const targetContainer = document.getElementById("targetEffects");
   if (!targetContainer) {
     console.error("No element with id 'targetEffects' found.");
@@ -394,11 +434,12 @@ document.addEventListener("DOMContentLoaded", () => {
     targetContainer.appendChild(btn);
   });
   
-  // NEW: Create the weed strain dropdown.
+  // Create the weed strain dropdown (if not already present).
   const container = document.querySelector(".container");
-  if (container) {
+  if (container && !document.getElementById("weedStrainSelection")) {
     const weedDiv = document.createElement("div");
     weedDiv.id = "weedStrainSelection";
+    weedDiv.className = "dropdown-container"; // Use CSS class for styling.
     weedDiv.innerHTML = `
       <label for="weedStrainSelect">Select Weed Strain: </label>
       <select id="weedStrainSelect">
@@ -415,6 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Event listener for the "Reverse Engineer" button.
 document.getElementById("reverseBtn").addEventListener("click", () => {
+  // Get target effects from active buttons.
   const targetEffects = [];
   const buttons = document.querySelectorAll("#targetEffects .effect-button.active");
   buttons.forEach(btn => targetEffects.push(btn.textContent));
@@ -425,27 +467,25 @@ document.getElementById("reverseBtn").addEventListener("click", () => {
     return;
   }
   
-  // NEW: Get the selected weed strain and map it to its base effect.
+  // Get the selected weed strain and map it to its base effect.
   const weedSelect = document.getElementById("weedStrainSelect");
   const selectedStrain = weedSelect ? weedSelect.value : "OG Kush";
   const startingEffect = weedStrainMapping[selectedStrain];
   
-  // Clear previous results and show the loading popup.
+  // Clear previous results and show the loading indicator.
   resultContainer.innerHTML = "";
   showLoadingIndicator();
   
-  // Call the reverse-engineering function with the starting effect.
-  asynchronousReverseEngineerChain(targetEffects, startingEffect, (solutions) => {
+  // Run the A* reverse engineering search.
+  aStarReverseEngineer(targetEffects, startingEffect, (solution) => {
     let output = "";
-    if (solutions.length === 0) {
+    if (!solution) {
       output = "No solution found (try selecting more effects or relaxing constraints).";
     } else {
-      solutions.forEach((sol, index) => {
-        output += `<strong>Solution ${index + 1}:</strong><br>`;
-        output += `Chain: ${sol.chain.join(" → ")}<br>`;
-        output += `Final Effects: ${sol.effects.join(", ")}<br>`;
-        output += `Total Ingredient Cost: $${sol.cost}<br><br>`;
-      });
+      output += `<strong>Optimal Solution Found:</strong><br>`;
+      output += `Chain: ${solution.chain.join(" → ")}<br>`;
+      output += `Final Effects: ${solution.effects.join(", ")}<br>`;
+      output += `Total Ingredient Cost: $${solution.cost}<br>`;
     }
     resultContainer.innerHTML = output;
     hideLoadingIndicator();
