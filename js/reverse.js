@@ -298,6 +298,7 @@ const effects = {
     const minCost = Math.min(...ingredients.map(i => i.cost));
     function heuristic(state) {
       let missing = targetEffects.filter(e => !state.effects.includes(e)).length;
+      const penaltyFactor = 0.5;
       return missing * minCost;
     }
     
@@ -344,7 +345,7 @@ function deduplicateSolutions(solutions) {
         if (solutions.length >= 3) break;
         continue;
       }
-      if (current.chain.length > 15) continue;
+      if (current.chain.length > 25) continue;
       ingredients.forEach(ing => {
         let result = applyRulesWithLog(ing.rules, current.effects, ing.name, ing.baseEffect);
         let newEffects = result.newStack;
