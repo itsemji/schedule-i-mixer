@@ -16,6 +16,28 @@ body {
   box-shadow: 0 0 10px #00000050;
 }
 
+.container-home {
+  max-width: 80%;
+  margin: 2rem auto;
+  background-color: #3e0a50;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #00000050;
+}
+
+.container ul {
+  text-align: left !important;
+  list-style-position: inside;
+}
+
+.container-home h1 {
+  text-align: center;
+}
+
+.container-home p {
+  text-align: center;
+}
+
 h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
@@ -220,6 +242,17 @@ nav li a:hover {
 
 nav ul li a.active {
   border-bottom: 2px solid var(--dank-green);
+}
+
+/* Mobile Formatting */
+@media (max-width: 600px) {
+  nav ul {
+    flex-direction: column; /* stack items */
+    gap: 0.5rem; /* smaller gap */
+  }
+  nav li {
+    margin: 0 auto; /* center each item horizontally */
+  }
 }
 
 /* Footer Styles */
