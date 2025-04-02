@@ -308,3 +308,67 @@ footer {
   border-radius: 8px;
   max-width: 300px;
 }
+
+/* Dealer Card Styles */
+.dealer-card {
+  background-color: #3e0a50;
+  border: 1px solid var(--dank-green);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: max-height 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+.dealer-card:hover {
+  box-shadow: 0 0 10px var(--dank-green-hover);
+}
+.dealer-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+.dealer-portrait {
+  width: 50px;
+  height: 50px;
+  background-color: #2e1044;
+  border-radius: 50%;
+  margin-right: 1rem;
+  /* Portrait image placeholder – replace with an <img> tag or background-image */
+}
+.dealer-name {
+  flex: 1;
+  font-size: 1.2rem;
+  color: #d7f7d3;
+}
+.toggle-icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+  color: var(--dank-green);
+}
+.dealer-customers {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  padding: 0 1rem;
+  background-color: #2e1044;
+}
+.dealer-card.expanded .dealer-customers {
+  padding: 1rem;
+  max-height: 500px; /* Adjust if needed for longer lists */
+}
+.dealer-card.expanded .toggle-icon {
+  transform: rotate(45deg);
+}
+.dealer-customers ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dealer-customers li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #4a1461;
+  color: #d7f7d3;
+}
+.dealer-customers li:last-child {
+  border-bottom: none;
+}
