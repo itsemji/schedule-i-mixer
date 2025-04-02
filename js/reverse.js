@@ -472,7 +472,7 @@ document.getElementById("reverseBtn").addEventListener("click", () => {
   aStarReverseEngineer(targetEffects, startingEffect, (solution) => {
     let output = "";
     if (!solution) {
-      output = "No solution found (try selecting more effects or relaxing constraints).";
+      output = "No solution found (try selecting more/less effects or a different starting strain).";
     } else {
       output += `<strong>Optimal Solution Found:</strong><br>`;
       output += `Chain: ${solution.chain.join(" → ")}<br>`;
@@ -500,3 +500,19 @@ function hideLoadingIndicator() {
     loadingIndicator.style.display = "none";
   }
 }
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', () => {
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('nav-menu');
+
+  hamburger.addEventListener('click', (event) => {
+    event.preventDefault();
+    navMenu.classList.toggle('show');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!navMenu.contains(event.target) && !hamburger.contains(event.target)) {
+      navMenu.classList.remove('show');
+    }
+  });
+});

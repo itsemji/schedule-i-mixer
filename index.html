@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Schedule I Mix Simulator - Home</title>
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+  <link rel="manifest" href="/assets/site.webmanifest">
+  <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon">
 
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="Schedule I Mix Simulator" />
@@ -12,18 +18,15 @@
   <meta property="og:url" content="https://www.s1sim.com" />
   <meta property="og:type" content="website" />
 
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
-  <link rel="manifest" href="/assets/site.webmanifest">
-  <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header>
     <nav>
-      <ul>
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+      <ul class="nav-menu" id="nav-menu">
         <li><a href="index.html" class="active">Home</a></li>
         <li><a href="calculator.html">Calculator</a></li>
         <li><a href="dealers.html">Dealers</a></li>
@@ -51,5 +54,6 @@
   <footer>
     <p>&copy; 2025 Schedule I Mix Simulator</p>
   </footer>
+  <script src="js/index.js"></script>
 </body>
 </html>

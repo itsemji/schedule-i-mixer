@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Help - Schedule I Mix Simulator</title>
   <link rel="stylesheet" href="css/style.css" />
+  <!-- Favicons -->
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
@@ -14,13 +15,16 @@
 <body>
   <header>
     <nav>
-      <ul>
-         <li><a href="index.html">Home</a></li>
-         <li><a href="calculator.html">Calculator</a></li>
-         <li><a href="dealers.html">Dealers</a></li>
-         <li><a href="reverse.html">Reverse Engineer</a></li>
-         <li><a href="history.html">Strain History</a></li>
-         <li><a href="help.html" class="active">Help</a></li>
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calculator.html">Calculator</a></li>
+        <li><a href="dealers.html">Dealers</a></li>
+        <li><a href="reverse.html">Reverse Engineer</a></li>
+        <li><a href="history.html">Strain History</a></li>
+        <li><a href="help.html" class="active">Help</a></li>
       </ul>
     </nav>
   </header>
@@ -74,7 +78,7 @@
             <strong>Cuke:</strong> If the mix contains Toxic, Cuke will replace it with Euphoric; if it finds Slippery, it swaps it for Munchies, and so on.
           </li>
           <li>
-            <strong>Paracetamol:</strong> May replace Energizing with Paranoia (if Munchies aren’t present) or add Sneaky, etc.
+            <strong>Paracetamol:</strong> Replace Energizing with Paranoia (if Munchies aren’t present) or add Sneaky, etc.
           </li>
         </ul>
         <p>
@@ -85,7 +89,7 @@
         <h2>FAQs</h2>
         <h3>Q: Why does the search sometimes take a while?</h3>
         <p>
-          A: We're running millions of possible ingredient combinations under the hood. If the desired effects are hard to reach,
+          A: We're running millions of possible ingredient combinations under the hood. Certain effects -- such as focused and shrinking -- take very specific combos of ingredient chains and base effects. If the desired effects are hard to reach,
           the search might run longer. Our loading spinner will let you know it's still working its magic.
         </p>
         <h3>Q: What if I can’t find a solution?</h3>
@@ -95,7 +99,7 @@
         </p>
         <h3>Q: I’m a degen—can I tweak the rules?</h3>
         <p>
-          A: Absolutely. The transformation rules and effect multipliers are all in the code. Tinker away and share your custom mix formulas!
+          A: Absolutely. The transformation rules and effect multipliers are all in the code. Tinker away and share your custom mix formulas! Send a pull request!
         </p>
       </section>
       <section>
@@ -112,5 +116,6 @@
   <footer>
     <p>&copy; 2025 Schedule I Mix Simulator</p>
   </footer>
+  <script src="js/help.js"></script>
 </body>
 </html>

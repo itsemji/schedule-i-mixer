@@ -2,18 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dealers – Schedule I Mix Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dealers - Schedule I Mix Simulator</title>
+  <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Link to the shared stylesheet -->
-  <link rel="stylesheet" href="css/style.css" /> <!-- :contentReference[oaicite:2]{index=2}&#8203;:contentReference[oaicite:3]{index=3} -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+  <link rel="manifest" href="/assets/site.webmanifest">
+  <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Schedule I Mix Simulator" />
+  <meta property="og:description" content="Mix your favorite strains and see real-time pricing and effects." />
+  <meta property="og:image" content="https://www.s1sim.com/assets/thumbnail.png" />
+  <meta property="og:url" content="https://www.s1sim.com" />
+  <meta property="og:type" content="website" />
 
 </head>
 <body>
   <!-- Site Navigation -->
   <header>
     <nav>
-      <ul>
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+      <ul class="nav-menu" id="nav-menu">
         <li><a href="index.html">Home</a></li>
         <li><a href="calculator.html">Calculator</a></li>
         <li><a href="dealers.html" class="active">Dealers</a></li>
@@ -28,6 +42,7 @@
   <main>
     <div class="container">
       <h1>Dealers and Their Ideal Customers</h1>
+
       <section id="dealers">
         <!-- Benji Coleman Dealer Card -->
         <article class="dealer-card">
@@ -135,8 +150,6 @@
       </section>
     </div>
   </main>
-
-  <!-- Footer -->
   <footer>
     <p>&copy; 2025 Schedule I Mix Simulator</p>
   </footer>

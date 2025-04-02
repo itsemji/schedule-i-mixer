@@ -372,3 +372,89 @@ footer {
 .dealer-customers li:last-child {
   border-bottom: none;
 }
+
+nav {
+  position: relative;
+}
+
+.hamburger {
+  display: none;
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--dank-green);
+  user-select: none;
+  z-index: 1001;
+}
+
+#nav-menu {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+#nav-menu li a {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  color: var(--dank-green);
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#nav-menu li a:hover {
+  background-color: var(--dank-green-hover);
+  color: black;
+}
+
+nav ul li a.active {
+  border-bottom: 2px solid var(--dank-green);
+}
+
+/* Mobile Styles */
+@media (max-width: 600px) {
+  .hamburger {
+    display: block;
+  }
+
+  #nav-menu {
+    flex-direction: column;
+    background-color: #3e0a50;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+  }
+
+  #nav-menu.show {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  #nav-menu li {
+    width: 100%;
+    text-align: center;
+  }
+
+  #nav-menu li a {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    border-bottom: 1px solid #4a1461;
+  }
+
+  #nav-menu li:last-child a {
+    border-bottom: none;
+  }
+}
