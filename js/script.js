@@ -13,9 +13,12 @@ const effects = {
   "Tropic Thunder": 0.46, "Zombifying": 0.58
 };
 
-// 2) Base prices
+// 2) Base prices updated to include individual weed strains
 const basePrices = {
-  "Weed": 35,
+  "OG Kush": 35,
+  "Green Crack": 35,
+  "Sour Diesel": 35,
+  "Grandaddy Purp": 35,
   "Meth": 70,
   "Cocaine": 150
 };
@@ -265,12 +268,12 @@ const effectColors = {
 // ===============================
 //    GLOBALS FOR CHAIN + PREVIEW
 // ===============================
-let chainMode = false;            // Indicates a finalized mix
-let currentStack = [];            // Final effect stack
-let currentChain = [];            // Ingredient chain used (initialize as empty)
-let totalIngredientCost = 0;      // Cumulative cost of ingredients
-let finalPrice = 0;               // Global final price
-let totalProfit = 0;              // Global total profit
+let chainMode = false;            
+let currentStack = [];            
+let currentChain = [];            
+let totalIngredientCost = 0;      
+let finalPrice = 0;               
+let totalProfit = 0;              
 
 // For real-time preview
 let previewStack = [];
@@ -283,8 +286,6 @@ let selectedEffects = new Set();
 // ===============================
 //   LOGIC FUNCTIONS
 // ===============================
-
-// Iterative rule application with deduplication & logging
 function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
   let newStack = [...stack];
   let log = [];
@@ -296,7 +297,6 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
       const hasIf = newStack.includes(ifEffect);
       const hasAnd = and ? newStack.includes(and) : true;
       const lacksUnless = !unless || !newStack.some(e => unless.includes(e));
-      // Replacement rule
       if (ifEffect && thenEffect && hasIf && hasAnd && lacksUnless) {
         const idx = newStack.indexOf(ifEffect);
         if (idx !== -1 && newStack[idx] !== thenEffect) {
@@ -305,7 +305,6 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
           changed = true;
         }
       }
-      // Add rule
       if (ifEffect && addEffect && hasIf && hasAnd && lacksUnless) {
         if (!newStack.includes(addEffect)) {
           log.push(`${ingredientName} adds ${addEffect}`);
@@ -315,17 +314,14 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
       }
     }
   }
-  // Ensure the ingredient's base effect is added if missing.
   if (!newStack.includes(ingredientBaseEffect)) {
     log.push(`${ingredientName} adds ${ingredientBaseEffect}`);
     newStack.push(ingredientBaseEffect);
   }
-  // Deduplicate effects.
   newStack = [...new Set(newStack)];
   return { newStack, log };
 }
 
-// Render the current mix result and transformation log.
 function renderResult(before, after, log) {
   const stackContainer = document.getElementById("effectStack");
   stackContainer.innerHTML = `
@@ -340,12 +336,10 @@ function renderResult(before, after, log) {
   }).join("");
 }
 
-// Determine the base stack for applying a new ingredient.
 function getBaseStack() {
   return chainMode ? currentStack : Array.from(selectedEffects);
 }
 
-// Real-time preview: when an ingredient is selected.
 function previewIngredient(ingredient) {
   const baseStack = getBaseStack();
   const { newStack, log } = applyRulesWithLog(
@@ -358,7 +352,6 @@ function previewIngredient(ingredient) {
   previewLog = log;
   renderResult(baseStack, previewStack, previewLog);
   
-  // Preview price calculation (not permanently added)
   const baseDrug = document.getElementById("baseDrug").value;
   const basePrice = basePrices[baseDrug];
   const totalMultiplier = previewStack.reduce((sum, eff) => sum + (effects[eff] || 0), 0);
@@ -368,11 +361,9 @@ function previewIngredient(ingredient) {
   document.getElementById("totalProfit").textContent = `Total Profit (Preview): $${previewProfit.toFixed(2)}`;
 }
 
-// Finalize the currently selected ingredient.
 function calculateEffects() {
   if (!selectedIngredient) return;
   
-  // If first time, initialize chain mode.
   if (!chainMode) {
     chainMode = true;
     currentStack = Array.from(selectedEffects);
@@ -380,20 +371,17 @@ function calculateEffects() {
     totalIngredientCost = 0;
   }
   
-  // Finalize the previewed transformation.
   currentStack = previewStack;
   currentChain = currentChain.concat(selectedIngredient.name);
   totalIngredientCost += selectedIngredient.cost;
   
   renderResult(getBaseStack(), currentStack, previewLog);
   
-  // Final price & profit calculations:
   const baseDrug = document.getElementById("baseDrug").value;
   const basePrice = basePrices[baseDrug];
   const totalMultiplier = currentStack.reduce((sum, eff) => sum + (effects[eff] || 0), 0);
   const calcPrice = Math.round(basePrice * (1 + totalMultiplier) * 100) / 100;
   const finalProfit = Math.round((calcPrice - totalIngredientCost) * 20 * 100) / 100;
-  // Update global finalPrice and totalProfit variables for saving purposes.
   finalPrice = calcPrice;
   totalProfit = finalProfit;
   document.getElementById("finalPrice").textContent = `Final Price: $${calcPrice.toFixed(2)}`;
@@ -405,7 +393,6 @@ function calculateEffects() {
   selectedIngredient = null;
 }
 
-// Clear all selections and reset the calculator.
 function clearStack() {
   chainMode = false;
   currentStack = [];
@@ -427,7 +414,6 @@ function clearStack() {
   document.getElementById("totalProfit").textContent = "Total Profit (20 units): $0.00";
 }
 
-// Toggle a starting effect on/off.
 function toggleEffect(btn, effect) {
   if (selectedEffects.has(effect)) {
     selectedEffects.delete(effect);
@@ -438,7 +424,6 @@ function toggleEffect(btn, effect) {
   }
 }
 
-// Modal popup for messages.
 function showModal(message, duration = 3000) {
   const modal = document.getElementById("modalMessage");
   if (modal) {
@@ -452,7 +437,6 @@ function showModal(message, duration = 3000) {
   }
 }
 
-// Save strain function using localStorage.
 function saveCurrentStrain() {
   if (!chainMode || currentStack.length === 0) {
     showModal("No strain to save! Please calculate your mix first.");
@@ -482,10 +466,6 @@ function saveCurrentStrain() {
   document.getElementById("strainNameInput").value = "";
 }
 
-// Attach event listener for Save Strain button.
-document.getElementById("saveStrainBtn").addEventListener("click", saveCurrentStrain);
-
-// When an ingredient button is clicked, select it and preview transformation.
 function selectIngredient(button, name) {
   document.querySelectorAll(".ingredient-button").forEach(btn => btn.classList.remove("selected"));
   button.classList.add("selected");
@@ -497,7 +477,6 @@ function selectIngredient(button, name) {
   previewIngredient(ing);
 }
 
-// Populate starting effects and ingredient buttons when DOM loads.
 document.addEventListener("DOMContentLoaded", () => {
   const startingEffectsContainer = document.getElementById("startingEffects");
   Object.keys(effects).forEach(effect => {
@@ -520,4 +499,41 @@ document.addEventListener("DOMContentLoaded", () => {
   
   document.getElementById("calculateBtn").addEventListener("click", calculateEffects);
   document.getElementById("clearBtn").addEventListener("click", clearStack);
+  document.getElementById("saveStrainBtn").addEventListener("click", saveCurrentStrain);
+  
+  // NEW: Weed Strain Selection Logic
+  const baseDrugSelect = document.getElementById("baseDrug");
+  const weedStrains = ["OG Kush", "Green Crack", "Sour Diesel", "Grandaddy Purp"];
+  // Mapping from weed strain to its base effect
+  const weedEffects = {
+    "OG Kush": "Calming",
+    "Green Crack": "Energizing",
+    "Sour Diesel": "Refreshing",
+    "Grandaddy Purp": "Sedating"
+  };
+  
+  baseDrugSelect.addEventListener("change", function() {
+    const selected = this.value;
+    // Always clear any previously selected effects
+    selectedEffects.clear();
+    document.querySelectorAll(".effect-button").forEach(btn => btn.classList.remove("active"));
+    
+    if (weedStrains.includes(selected)) {
+      // Activate only the effect corresponding to the selected weed strain
+      const baseEffect = weedEffects[selected];
+      document.querySelectorAll(".effect-button").forEach(btn => {
+        if (btn.textContent === baseEffect) {
+          btn.classList.add("active");
+        }
+      });
+      // Update the selectedEffects set
+      selectedEffects.add(baseEffect);
+    }
+    // For non-weed selections, no base effect is automatically applied.
+  });
+  
+  // Trigger change event on load if the default is a weed strain
+  if (weedStrains.includes(baseDrugSelect.value)) {
+    baseDrugSelect.dispatchEvent(new Event("change"));
+  }
 });
