@@ -17,7 +17,7 @@ The simulator consists of several core pages:
 
 - **Home/Landing Page:** A quick intro and navigation to the different sections.
 - **Mix Calculator:** Select a base drug, choose starting effects, and iteratively apply ingredients (with real-time preview) to evolve your mix. Final pricing and profit are calculated based on the total effect multipliers.
-- **Reverse Engineer:** Select desired final effects and let the tool search for the top 3 cost-efficient ingredient chains that produce a strain containing (or exceeding) those effects.
+- **Reverse Engineer:** Select desired final effects and let the tool search for the most cost-efficient ingredient chain that produces a strain containing (or exceeding) those effects.
 - **Strain History:** Save your finalized mixes (with custom names) for later review, deletion, or sharing.
 - **Help/Documentation:** A guide on how the simulator works, including transformation rules, FAQs, and troubleshooting tips.
 
@@ -33,21 +33,7 @@ The simulator consists of several core pages:
 
 ## Getting Started
 
-### Prerequisites
-- A modern web browser (Chrome, Firefox, Edge, etc.)
-- (Optional) Git for version control and collaboration
-
-### Installation
-
-1. **Clone the repository:**
-
- ```bash
- git clone https://github.com/itsemji/schedule-i-mix-simulator.git
- cd schedule-i-mix-simulator
-```
-Open the index.html file in your browser:
-
-You can open it directly from your file system or use a local server (e.g., VS Code's Live Server extension).
+Just head on over to the website [Schedule I Mix Simulator](https://www.s1sim.com/) and get mixing!
 
 ## Credits
 
