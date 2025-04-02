@@ -327,7 +327,6 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
 // ------------------------------
 
 // Refined heuristic using effect difficulty mapping.
-// For each missing target effect, add: difficulty * minCost * 0.5.
 function refinedHeuristic(node, targetEffects, minCost) {
   let h = 0;
   targetEffects.forEach(effect => {
@@ -340,26 +339,22 @@ function refinedHeuristic(node, targetEffects, minCost) {
 }
 
 // Standard A* search that returns the single most cost-effective chain.
-// This version uses a visited (closed) set to prune duplicate states.
 function aStarReverseEngineer(targetEffects, startingEffect, callback) {
   const minCost = Math.min(...ingredients.map(i => i.cost));
-  // Each node: { effects: [...], chain: [...], cost: number }
+  // Initialize the frontier; if startingEffect is empty, start with an empty effects array.
   let frontier = [];
-  frontier.push({ effects: [startingEffect], chain: [], cost: 0 });
-  // visited: map state signature -> lowest cost found for that state.
+  frontier.push({ effects: startingEffect ? [startingEffect] : [], chain: [], cost: 0 });
   const visited = {};
 
-  // Helper: create a unique key for a state by sorting its effects.
   function stateKey(effectsArr) {
     return effectsArr.slice().sort().join("|");
   }
 
-  // Helper function to check if state satisfies all target effects.
   function goalTest(node) {
     return targetEffects.every(e => node.effects.includes(e));
   }
 
-  const maxChainLength = 50; // Increase allowed depth for multiple targets.
+  const maxChainLength = 50;
   const timeLimit = 120000; // 2 minutes
   const startTime = Date.now();
 
@@ -369,21 +364,17 @@ function aStarReverseEngineer(targetEffects, startingEffect, callback) {
       callback(null);
       return;
     }
-    // Sort frontier by f = cost + refinedHeuristic
     frontier.sort((a, b) =>
       (a.cost + refinedHeuristic(a, targetEffects, minCost)) -
       (b.cost + refinedHeuristic(b, targetEffects, minCost))
     );
-    // Get best candidate
     let current = frontier.shift();
     if (!current) {
       callback(null);
       return;
     }
-    // Check visited
     let key = stateKey(current.effects);
     if (visited[key] !== undefined && visited[key] <= current.cost) {
-      // Skip this node since a better or equal cost state has been seen.
       setTimeout(processBatch, 0);
       return;
     }
@@ -396,11 +387,9 @@ function aStarReverseEngineer(targetEffects, startingEffect, callback) {
       setTimeout(processBatch, 0);
       return;
     }
-    // Expand current node
     ingredients.forEach(ing => {
       const result = applyRulesWithLog(ing.rules, current.effects, ing.name, ing.baseEffect);
       const newEffects = result.newStack;
-      // Skip if no change
       if (newEffects.toString() === current.effects.toString()) return;
       const newChain = current.chain.concat(ing.name);
       const newCost = current.cost + ing.cost;
@@ -417,8 +406,8 @@ function aStarReverseEngineer(targetEffects, startingEffect, callback) {
 //    UI INTEGRATION
 // ------------------------------
 
-// Populate target effects buttons on DOM load.
 document.addEventListener("DOMContentLoaded", () => {
+  // Populate target effects buttons.
   const targetContainer = document.getElementById("targetEffects");
   if (!targetContainer) {
     console.error("No element with id 'targetEffects' found.");
@@ -434,29 +423,29 @@ document.addEventListener("DOMContentLoaded", () => {
     targetContainer.appendChild(btn);
   });
   
-  // Create the weed strain dropdown.
-  const container = document.querySelector(".container");
-  if (container && !document.getElementById("weedStrainSelection")) {
-    const weedDiv = document.createElement("div");
-    weedDiv.id = "weedStrainSelection";
-    weedDiv.className = "dropdown-container"; // Use CSS class for styling.
-    weedDiv.innerHTML = `
-      <label for="weedStrainSelect">Select Weed Strain: </label>
-      <select id="weedStrainSelect">
+  // Create the base product dropdown in the new "baseSelection" container.
+  const baseSelectionContainer = document.getElementById("baseSelection");
+  if (baseSelectionContainer && !document.getElementById("baseProductSelection")) {
+    const baseDiv = document.createElement("div");
+    baseDiv.id = "baseProductSelection";
+    baseDiv.className = "dropdown-container"; // Uses existing CSS.
+    baseDiv.innerHTML = `
+      <label for="baseProductSelect">Select Base Product: </label>
+      <select id="baseProductSelect">
         <option value="OG Kush">OG Kush</option>
         <option value="Green Crack">Green Crack</option>
         <option value="Sour Diesel">Sour Diesel</option>
         <option value="Grandaddy Purp">Grandaddy Purp</option>
+        <option value="Meth">Meth</option>
+        <option value="Coke">Coke</option>
       </select>
     `;
-    // Insert the dropdown above the target effects container.
-    container.insertBefore(weedDiv, targetContainer);
+    baseSelectionContainer.appendChild(baseDiv);
   }
 });
 
 // Event listener for the "Reverse Engineer" button.
 document.getElementById("reverseBtn").addEventListener("click", () => {
-  // Get target effects from active buttons.
   const targetEffects = [];
   const buttons = document.querySelectorAll("#targetEffects .effect-button.active");
   buttons.forEach(btn => targetEffects.push(btn.textContent));
@@ -467,16 +456,19 @@ document.getElementById("reverseBtn").addEventListener("click", () => {
     return;
   }
   
-  // Get the selected weed strain and map it to its base effect.
-  const weedSelect = document.getElementById("weedStrainSelect");
-  const selectedStrain = weedSelect ? weedSelect.value : "OG Kush";
-  const startingEffect = weedStrainMapping[selectedStrain];
+  // Get the selected base product.
+  const baseSelect = document.getElementById("baseProductSelect");
+  const selectedProduct = baseSelect ? baseSelect.value : "OG Kush";
+  let startingEffect;
+  if (weedStrainMapping[selectedProduct]) {
+      startingEffect = weedStrainMapping[selectedProduct];
+  } else {
+      startingEffect = ""; // No base effect for Meth or Coke.
+  }
   
-  // Clear previous results and show the loading indicator.
   resultContainer.innerHTML = "";
   showLoadingIndicator();
   
-  // Run the A* reverse engineering search.
   aStarReverseEngineer(targetEffects, startingEffect, (solution) => {
     let output = "";
     if (!solution) {
@@ -489,13 +481,12 @@ document.getElementById("reverseBtn").addEventListener("click", () => {
     }
     resultContainer.innerHTML = output;
     hideLoadingIndicator();
-    // Clear active state from effect buttons.
     document.querySelectorAll("#targetEffects .effect-button.active")
       .forEach(btn => btn.classList.remove("active"));
   });
 });
 
-// Loading Popup: Show and hide the loading indicator.
+// Loading indicator functions.
 function showLoadingIndicator() {
   const loadingIndicator = document.getElementById("loadingIndicator");
   if (loadingIndicator) {
