@@ -363,30 +363,35 @@ function previewIngredient(ingredient) {
 
 function calculateEffects() {
   if (!selectedIngredient) return;
-  
+
   if (!chainMode) {
     chainMode = true;
     currentStack = Array.from(selectedEffects);
     currentChain = [];
     totalIngredientCost = 0;
   }
-  
+
   currentStack = previewStack;
   currentChain = currentChain.concat(selectedIngredient.name);
   totalIngredientCost += selectedIngredient.cost;
-  
+
   renderResult(getBaseStack(), currentStack, previewLog);
-  
+
   const baseDrug = document.getElementById("baseDrug").value;
   const basePrice = basePrices[baseDrug];
   const totalMultiplier = currentStack.reduce((sum, eff) => sum + (effects[eff] || 0), 0);
   const calcPrice = Math.round(basePrice * (1 + totalMultiplier) * 100) / 100;
-  const finalProfit = Math.round((calcPrice - totalIngredientCost) * 20 * 100) / 100;
+  const unitsSold = 20;
+  const totalCostForUnits = totalIngredientCost * unitsSold;
+
+  const revenue = calcPrice * unitsSold;
+  const finalProfit = Math.round((revenue - totalCostForUnits) * 100) / 100;
+
   finalPrice = calcPrice;
   totalProfit = finalProfit;
   document.getElementById("finalPrice").textContent = `Final Price: $${calcPrice.toFixed(2)}`;
-  document.getElementById("totalProfit").textContent = `Total Profit (20 units): $${finalProfit.toFixed(2)}`;
-  
+  document.getElementById("totalProfit").textContent = `Total Profit (${unitsSold} units): $${finalProfit.toFixed(2)}`;
+
   previewStack = [];
   previewLog = [];
   document.querySelectorAll(".ingredient-button").forEach(btn => btn.classList.remove("selected"));
@@ -443,17 +448,19 @@ function saveCurrentStrain() {
     return;
   }
   
+  const unitsSold = 20; 
   const strainName = document.getElementById("strainNameInput").value.trim() ||
                      `Strain ${new Date().toLocaleString()}`;
-  
+
   const strain = {
     name: strainName,
     startingEffects: Array.from(selectedEffects),
     chain: currentChain || [],
     finalEffects: currentStack,
-    totalCost: totalIngredientCost || 0,
-    finalPrice: finalPrice || 0,
-    totalProfit: totalProfit || 0,
+    ingredientCostPerUnit: totalIngredientCost.toFixed(2),  // New field
+    totalIngredientCost: (totalIngredientCost * unitsSold).toFixed(2), // New field
+    finalPrice: finalPrice.toFixed(2),
+    totalProfit: totalProfit.toFixed(2),
     timestamp: Date.now()
   };
   

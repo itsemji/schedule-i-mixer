@@ -19,7 +19,7 @@ function saveStrains(strains) {
   localStorage.setItem(storageKey, JSON.stringify(strains));
 }
 
-// Create a strain element for display
+// Updated createStrainElement function
 function createStrainElement(strain, index) {
   const container = document.createElement("div");
   container.className = "strain-entry";
@@ -28,7 +28,6 @@ function createStrainElement(strain, index) {
   container.style.marginBottom = "1rem";
   container.style.borderRadius = "8px";
   
-  // Header with strain name (clickable to toggle details)
   const header = document.createElement("h3");
   header.textContent = strain.name
     ? `${strain.name} (Saved on ${new Date(strain.timestamp).toLocaleString()})`
@@ -36,36 +35,29 @@ function createStrainElement(strain, index) {
   header.style.cursor = "pointer";
   container.appendChild(header);
   
-  // Details div: starting effects, ingredient chain, final effects, cost, price, profit
   const detailsDiv = document.createElement("div");
   detailsDiv.className = "strain-details";
-  detailsDiv.style.display = "none"; // Hidden by default
-  const startingEffects = strain.startingEffects && strain.startingEffects.length
-    ? strain.startingEffects.join(", ")
-    : "N/A";
-  const chain = strain.chain && strain.chain.length
-    ? strain.chain.join(" → ")
-    : "N/A";
-  const finalEff = strain.finalEffects && strain.finalEffects.length
-    ? strain.finalEffects.join(", ")
-    : "N/A";
+  detailsDiv.style.display = "none";
+  
+  const startingEffects = strain.startingEffects?.length ? strain.startingEffects.join(", ") : "N/A";
+  const chain = strain.chain?.length ? strain.chain.join(" → ") : "N/A";
+  const finalEff = strain.finalEffects?.length ? strain.finalEffects.join(", ") : "N/A";
   
   detailsDiv.innerHTML = `
     <p><strong>Starting Effects:</strong> ${startingEffects}</p>
     <p><strong>Ingredient Chain:</strong> ${chain}</p>
     <p><strong>Final Effects:</strong> ${finalEff}</p>
-    <p><strong>Total Cost:</strong> $${strain.totalCost}</p>
-    <p><strong>Final Price:</strong> $${strain.finalPrice}</p>
-    <p><strong>Total Profit:</strong> $${strain.totalProfit}</p>
+    <p><strong>Ingredient Cost (per unit):</strong> $${strain.ingredientCostPerUnit}</p>
+    <p><strong>Total Ingredient Cost (20 units):</strong> $${strain.totalIngredientCost}</p>
+    <p><strong>Final Price (per unit):</strong> $${strain.finalPrice}</p>
+    <p><strong>Total Profit (20 units):</strong> $${strain.totalProfit}</p>
   `;
   container.appendChild(detailsDiv);
   
-  // Toggle the details when header is clicked
   header.addEventListener("click", () => {
     detailsDiv.style.display = detailsDiv.style.display === "none" ? "block" : "none";
   });
   
-  // Create and append a Delete button with some spacing
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "deleteStrainBtn";
   deleteBtn.setAttribute("data-index", index);
@@ -119,6 +111,7 @@ document.getElementById("clearHistoryBtn").addEventListener("click", () => {
 
 // Initialize history display when the page loads
 document.addEventListener("DOMContentLoaded", renderHistory);
+
 // Hamburger menu toggle
 document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.getElementById('hamburger');
