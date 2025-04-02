@@ -514,11 +514,11 @@ document.addEventListener("DOMContentLoaded", () => {
   
   baseDrugSelect.addEventListener("change", function() {
     const selected = this.value;
+    // Always clear any previously selected effects
+    selectedEffects.clear();
+    document.querySelectorAll(".effect-button").forEach(btn => btn.classList.remove("active"));
+    
     if (weedStrains.includes(selected)) {
-      // Clear any previously selected effects
-      selectedEffects.clear();
-      // Remove active class from all effect buttons
-      document.querySelectorAll(".effect-button").forEach(btn => btn.classList.remove("active"));
       // Activate only the effect corresponding to the selected weed strain
       const baseEffect = weedEffects[selected];
       document.querySelectorAll(".effect-button").forEach(btn => {
@@ -529,7 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update the selectedEffects set
       selectedEffects.add(baseEffect);
     }
-    // (For non-weed selections, the user can manually select effects.)
+    // For non-weed selections, no base effect is automatically applied.
   });
   
   // Trigger change event on load if the default is a weed strain
