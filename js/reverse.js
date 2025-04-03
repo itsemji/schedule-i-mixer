@@ -355,7 +355,7 @@ function aStarReverseEngineer(targetEffects, startingEffect, callback) {
   }
 
   const maxChainLength = 50;
-  const timeLimit = 120000; // 2 minutes
+  const timeLimit = 60000; // 1 minute
   const startTime = Date.now();
 
   function processBatch() {
@@ -472,7 +472,7 @@ document.getElementById("reverseBtn").addEventListener("click", () => {
   aStarReverseEngineer(targetEffects, startingEffect, (solution) => {
     let output = "";
     if (!solution) {
-      output = "No solution found (try selecting more/less effects or a different starting strain).";
+      output = "No solution found. Try selecting different/fewer effects.";
     } else {
       output += `<strong>Optimal Solution Found:</strong><br>`;
       output += `Chain: ${solution.chain.join(" → ")}<br>`;
@@ -513,6 +513,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (event) => {
     if (!navMenu.contains(event.target) && !hamburger.contains(event.target)) {
       navMenu.classList.remove('show');
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('popupModal');
+  const openModalBtn = document.getElementById('modal');
+  const closeModalBtn = document.getElementById('closeModal');
+
+  // Open modal on button click
+  openModalBtn.addEventListener('click', () => {
+    modal.style.display = 'flex';
+  });
+
+  // Close modal on close button click
+  closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  // Close modal when clicking outside the modal content
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
     }
   });
 });

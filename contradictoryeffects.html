@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contradictory Effects - Schedule I Mix Simulator</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="hamburger" id="hamburger">☰ <strong>Contradictory Effects</strong></div>
+      <ul id="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calculator.html">Calculator</a></li>
+        <li><a href="dealers.html">Dealers</a></li>
+        <li><a href="reverse.html">Reverse Engineer</a></li>
+        <li><a href="history.html">Strain History</a></li>
+        <li><a href="help.html">Help</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1>Why Some Effect Combinations Don't Work</h1>
+      <p>
+        If you're trying to reverse engineer a specific chain and not getting results, don't worry — you're not doing anything wrong.
+        Some combinations of effects are either logically impossible or extremely unlikely to occur due to how ingredients interact.
+      </p>
+
+      <h2>How Contradictions Happen</h2>
+      <ul>
+        <li><strong>Rule Conflicts:</strong> Some effects overwrite others during mixing (e.g., <em>Energizing → Schizophrenia</em>).</li>
+        <li><strong>Self-Canceling Chains:</strong> Certain ingredients reverse each other's changes.</li>
+        <li><strong>Unreachable Effects:</strong> Some effects can only be reached via very specific sequences — or not at all.</li>
+      </ul>
+
+      <h2>Examples of Contradictory Combinations</h2>
+      <div class="container">
+        <ul>
+          <li><strong>Energizing + Schizophrenia</strong>: Motor Oil replaces Energizing with Schizophrenia.</li>
+          <br>
+          <li><strong>Munchies + Schizophrenia</strong>: Same issue — only one survives depending on conditions.</li>
+          <br>
+          <li><strong>Euphoric + Sedating</strong>: Ingredients tend to convert Euphoric to something else before Sedating applies.</li>
+          <br>
+          <li><strong>Focused + Seizure-Inducing</strong>: Banana transforms Focused into Seizure-Inducing — so they can’t coexist.</li>
+          <br>
+          <li><strong>Smelly + Anti-Gravity</strong>: Banana transforms Smelly into Anti-Gravity, removing the original effect.</li>
+          <br>
+          <li><strong>Disorienting + Electrifying</strong>: One tends to cancel or overwrite the other in chains.</li>
+        </ul>
+      </div>
+
+      <h2>What You Can Do</h2>
+      <ul>
+        <li>Try using fewer or different effects if no chain is found.</li>
+        <li>Refer to the <a href="calculator.html">Calculator</a> page to experiment with ingredient logic directly.</li>
+        <li>If you're still stuck, check the <a href="help.html">Help</a> page or let us know!</li>
+      </ul>
+
+      <div class="button-row"></div>
+      <p><a href="reverse.html" class="effect-button">← Back to Reverse Engineer</a></p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Schedule I Mix Simulator</p>
+  </footer>
+
+  <script>
+    // Hamburger menu toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const hamburger = document.getElementById('hamburger');
+      const navMenu = document.getElementById('nav-menu');
+
+      hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('show');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          navMenu.classList.remove('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

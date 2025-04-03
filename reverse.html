@@ -48,8 +48,27 @@
       <!-- Button row for spacing -->
       <div class="row button-row">
         <button id="reverseBtn">Reverse Engineer</button>
+        <button id="modal">Why isn't it working?</button>
       </div>
-      
+
+      <!-- Modal Structure -->
+      <div id="popupModal" class="modal-overlay">
+        <div class="modal-content">
+          <span id="closeModal" class="close-btn">&times;</span>
+          <p>This might take a bit of time if the effects you're after are very specific or complex.
+          <br>
+          <br> <strong>Other reasons might include:</strong>
+            <ul>
+              <li>Specific Effect Combination not possible (see <a href="https://www.s1sim.com/contradictoryeffects" class="reverseBtn">here</a>).</li>
+              <br>
+              <li>Effects not achievable with current starting drug.</li>
+              <br>
+              <li>The engine could not find a suitable chain before the timeout limit (1min).</li>
+            </ul>
+          <br>If nothing comes up, try selecting different effects or a different starting strain!</p>
+        </div>
+      </div>
+
       <div id="reverseResult" class="effects">
         Your reverse engineered chain will appear here.
       </div>

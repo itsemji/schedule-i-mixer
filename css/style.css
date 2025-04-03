@@ -523,3 +523,69 @@ a:hover {
 a:visited {
   color: var(--purple-active);
 }
+
+/* Popup Overlay */
+/* BROKEN RIGHT NOW**********.popupModal {
+  background-color: var(--purple-base);
+  color: var(--dank-green);
+  padding: 0.6rem 1.2rem;
+}
+.popupModal:hover {
+  background-color: var(--purple-hover);
+  color: var(--dank-green);
+} */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  z-index: 1001;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #3e0a50;
+  color: #d7f7d3;
+  padding: 1.5rem;
+  border-radius: 12px;
+  position: relative;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-sub {
+  background: #3e0a50;
+  color: #d7f7d3;
+  padding: 1.5rem;
+  border-radius: 12px;
+  position: relative;
+  max-width: 400px;
+  text-align: center;
+  font-size: smaller;
+}
+
+.modal-content ul {
+  text-align: left;
+}
+
+.modal-content a {
+  border: none;
+  padding: none;
+  background-color: transparent;
+  justify-content: center;
+
+}
+
+.close-btn {
+  position: absolute;
+  top: 0rem;
+  right: 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--dank-green);
+}
