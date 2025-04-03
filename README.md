@@ -39,3 +39,6 @@ Just head on over to the website [Schedule I Mix Simulator](https://www.s1sim.co
 
 - Core logic based on the work of **Shibka** and contributors at [Schedule1-Calculator.com](https://schedule1-calculator.com/)
 - UX/UI + advanced features developed and iterated with love by degens on Discord
+
+ [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+ 
