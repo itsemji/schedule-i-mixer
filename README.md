@@ -33,7 +33,7 @@ The simulator consists of several core pages:
 
 ## Getting Started
 
-Just head on over to the website [Schedule I Mix Simulator](https://www.s1sim.com/) and get mixing!
+Just head on over to the website [Schedule I Mix Simulator](https://www.s1sim.com/) and get mixing!  Add code if you are able to help
 
 ## Credits
 
