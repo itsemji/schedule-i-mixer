@@ -7,6 +7,22 @@ body {
   padding: 0;
 }
 
+/* Social Media Footers */
+
+.social {
+  max-width: 60%;
+  background-color: var(--purple-base);
+  border: 1px solid #9b4ea3;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: auto;
+  user-select: none;
+  transition: all 0.2s ease;
+  flex: 1 1 150px;
+  text-align: center;
+  color: var(--dank-green);
+}
+
 .container {
   max-width: 960px;
   margin: 2rem auto;
@@ -14,6 +30,7 @@ body {
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 0 10px #00000050;
+  color: auto;
 }
 
 .container-home {
@@ -23,6 +40,16 @@ body {
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 0 10px #00000050;
+  color: var(--dank-green);
+}
+
+.container-tiny {
+  max-width: 40%;
+  margin: 2rem auto;
+  background-color: #3e0a50;
+  padding: 1rem;
+  color: var(--dank-green);
+  font-size: small;
 }
 
 .container-home ul {
@@ -420,9 +447,25 @@ nav ul li a.active {
 @media (max-width: 600px) {
   .hamburger {
     display: block;
+    position: absolute;
+    width: 100%;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    max-width: 100%;
+    z-index: 1000;
+    text-align: left;
+    padding: 1rem auto;
+    border-radius: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    background-color: var(--purple-base);
+    color: var(--dank-green);
+    transition-delay: 10ms;
   }
 
-  #nav-menu {
+   #nav-menu {
     flex-direction: column;
     background-color: #3e0a50;
     position: absolute;
@@ -440,6 +483,8 @@ nav ul li a.active {
   #nav-menu.show {
     max-height: 500px;
     opacity: 1;
+    border-radius: 6px;
+    background-color: var(--purple-base);
   }
 
   #nav-menu li {
@@ -457,4 +502,24 @@ nav ul li a.active {
   #nav-menu li:last-child a {
     border-bottom: none;
   }
+}
+
+/* link styles*/
+
+a:link {
+  color: var(--dank-green);
+}
+
+a:hover {
+  color: var(--dank-green-hover);
+  background-color: var(--purple-active);
+  text-decoration: none;
+  padding: 1%;
+  border-radius: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+a:visited {
+  color: var(--purple-active);
 }
