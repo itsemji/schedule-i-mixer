@@ -286,6 +286,8 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
   let newStack = [...stack];
   let log = [];
   let changed = true;
+  const overwritten = new Set();
+
   while (changed) {
     changed = false;
     for (const rule of rules) {
@@ -293,15 +295,18 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
       const hasIf = newStack.includes(ifEffect);
       const hasAnd = and ? newStack.includes(and) : true;
       const lacksUnless = !unless || !newStack.some(e => unless.includes(e));
+
       // Replacement rule
       if (ifEffect && thenEffect && hasIf && hasAnd && lacksUnless) {
         const idx = newStack.indexOf(ifEffect);
         if (idx !== -1 && newStack[idx] !== thenEffect) {
           log.push(`${ingredientName} replaces ${ifEffect} with ${thenEffect}`);
+          overwritten.add(ifEffect);
           newStack[idx] = thenEffect;
           changed = true;
         }
       }
+
       // Add rule
       if (ifEffect && addEffect && hasIf && hasAnd && lacksUnless) {
         if (!newStack.includes(addEffect)) {
@@ -312,14 +317,15 @@ function applyRulesWithLog(rules, stack, ingredientName, ingredientBaseEffect) {
       }
     }
   }
+
   // Ensure the ingredient's base effect is added if missing.
   if (!newStack.includes(ingredientBaseEffect)) {
     log.push(`${ingredientName} adds ${ingredientBaseEffect}`);
     newStack.push(ingredientBaseEffect);
   }
-  // Deduplicate effects.
+
   newStack = [...new Set(newStack)];
-  return { newStack, log };
+  return { newStack, log, overwritten };
 }
 
 // ------------------------------
@@ -332,7 +338,8 @@ function refinedHeuristic(node, targetEffects, minCost) {
   targetEffects.forEach(effect => {
     if (!node.effects.includes(effect)) {
       const difficulty = effectDifficulty[effect] || 1;
-      h += difficulty * minCost * 0.5;
+      const lostPenalty = node.lost?.has(effect) ? 1.5 : 1.0;
+      h += difficulty * minCost * 0.5 * lostPenalty;
     }
   });
   return h;
@@ -393,7 +400,20 @@ function aStarReverseEngineer(targetEffects, startingEffect, callback) {
       if (newEffects.toString() === current.effects.toString()) return;
       const newChain = current.chain.concat(ing.name);
       const newCost = current.cost + ing.cost;
-      const newNode = { effects: newEffects, chain: newChain, cost: newCost };
+      const newLost = new Set([...(current.lost || []), ...result.overwritten]);
+
+// Recovery boost if this ingredient can restore a lost target
+const recovering = Array.from(newLost).some(lost =>
+  ing.baseEffect === lost ||
+  ing.rules.some(r => r.then === lost || r.add === lost)
+);
+
+const newNode = {
+  effects: newEffects,
+  chain: newChain,
+  cost: recovering ? newCost - 0.5 : newCost,
+  lost: newLost
+};
       frontier.push(newNode);
     });
     setTimeout(processBatch, 0);
