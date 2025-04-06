@@ -1,0 +1,59 @@
+<!-- File: 500.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Error - Schedule I Mix Simulator</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calculator.html">Calculator</a></li>
+        <li><a href="dealers.html">Dealers</a></li>
+        <li><a href="reverse.html">Reverse Engineer</a></li>
+        <li><a href="history.html">Strain History</a></li>
+        <li><a href="help.html">Help</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="container modal-sub">
+      <h1>&#9888; Error 500 &#9888; </h1>
+      <h2 id="errorMessage">Loading strange vibes...</h2>
+      <p>We're experiencing technical difficulties or the site failed to build properly.</p>
+      <p>Please try again later, or <a href="index.html">return home</a>.</p>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Schedule I Mix Simulator</p>
+  </footer>
+  <script>
+    const errorMessages = [
+      "This mix backfired harder than a meth-banana smoothie.",
+      "Server's higher than OG Kush right now. Try again later.",
+      "Too much Horse Semen in the pipeline. Build failed.",
+      "Error 500: Simulation zooted off the grid.",
+      "Oops! The algorithm overdosed on Tropic Thunder.",
+      "Strain history corrupted. Try a lower dosage.",
+      "Euphoric vibes? Yes. Functional code? Not today.",
+      "This ain’t your final form… the server just needs a nap.",
+      "The effects stacked into a paradox. Server said 'nah'.",
+      "Zombifying mix detected. Rebuilding brain cells…",
+      "Glitch induced by illegal combination: Gasoline + Donut. (Kidding, it wasn't you.)",
+      "Schizophrenia stack overflow. Consult your dealer.",
+      "Reverse engineered into a black hole. Please reboot.",
+      "We put 'Bright-Eyed' on the code… and it stared too hard."
+    ];
+    
+    const messageEl = document.getElementById("errorMessage");
+    if (messageEl) {
+      const randomIndex = Math.floor(Math.random() * errorMessages.length);
+      messageEl.textContent = errorMessages[randomIndex];
+    }
+  </script>  
+</body>
+</html>
